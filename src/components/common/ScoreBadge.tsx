@@ -1,21 +1,29 @@
-type ScoreBadgeProps = {
-  score: number;
-};
+"use client";
 
-export function ScoreBadge({ score }: ScoreBadgeProps) {
+import { cn } from "@/lib/utils";
+
+interface ScoreBadgeProps {
+  score: number;
+  className?: string;
+}
+
+function scoreColor(score: number): string {
+  if (score >= 70) return "bg-red-100 text-red-800 border-red-200";
+  if (score >= 40) return "bg-yellow-100 text-yellow-800 border-yellow-200";
+  return "bg-green-100 text-green-800 border-green-200";
+}
+
+export function ScoreBadge({ score, className }: ScoreBadgeProps) {
   return (
     <span
-      style={{
-        display: "inline-block",
-        padding: "0.25rem 0.5rem",
-        borderRadius: 999,
-        background: "var(--card)",
-        border: "1px solid var(--accent)",
-        fontSize: 12
-      }}
+      className={cn(
+        "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold",
+        scoreColor(score),
+        className
+      )}
       aria-label={`Priority score ${score}`}
     >
-      Score: {score.toFixed(1)}
+      {score}
     </span>
   );
 }

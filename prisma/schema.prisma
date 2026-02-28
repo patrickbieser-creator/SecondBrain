@@ -1,0 +1,265 @@
+// Prisma schema for FocusOS
+// SQLite for local dev; swap provider to "postgresql" for Neon in production
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+
+  settings     UserSettings?
+  domains      Domain[]
+  projects     Project[]
+  inboxItems   InboxItem[]
+  tasks        Task[]
+  taskDeps     TaskDependency[]
+  tags         Tag[]
+  taskTags     TaskTag[]
+  scoringRuns  ScoringRun[]
+  dailyPlans   DailyPlan[]
+  focusSessions FocusSession[]
+  activityLogs ActivityLog[]
+}
+
+model UserSettings {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  currentDomainId        String?
+  deepWorkEnabled        Boolean  @default(false)
+  defaultAvailableMinutes Int     @default(240)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentDomain Domain? @relation(fields: [currentDomainId], references: [id])
+}
+
+// ── Domains ───────────────────────────────────────────────────────────────────
+
+// DomainStatus: ACTIVE | ARCHIVED
+model Domain {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  color     String?
+  sortOrder Int      @default(0)
+  status    String   @default("ACTIVE") // DomainStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects     Project[]
+  tasks        Task[]
+  userSettings UserSettings[]
+
+  @@unique([userId, name])
+}
+
+// ── Projects ──────────────────────────────────────────────────────────────────
+
+// ProjectStatus: ACTIVE | PAUSED | DONE
+model Project {
+  id          String    @id @default(uuid())
+  userId      String
+  domainId    String
+  name        String
+  description String?
+  status      String    @default("ACTIVE") // ProjectStatus
+  deadlineAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domain Domain   @relation(fields: [domainId], references: [id])
+  tasks  Task[]
+
+  @@index([userId, domainId, status])
+}
+
+// ── Inbox ─────────────────────────────────────────────────────────────────────
+
+// InboxStatus: UNPROCESSED | TRIAGED | DISCARDED
+// InboxSource: MANUAL | EMAIL | VOICE | IMPORT
+model InboxItem {
+  id                    String    @id @default(uuid())
+  userId                String
+  source                String    @default("MANUAL") // InboxSource
+  rawText               String
+  capturedAt            DateTime  @default(now())
+  status                String    @default("UNPROCESSED") // InboxStatus
+  aiSuggestedDomainId   String?
+  aiSuggestedType       String?
+  aiSuggestionsJson     String?   // JSON stored as text for SQLite
+  triagedToTaskId       String?
+  triagedToProjectId    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, capturedAt])
+}
+
+// ── Tasks ─────────────────────────────────────────────────────────────────────
+
+// TaskStatus: NEXT | IN_PROGRESS | WAITING | SOMEDAY | DONE
+// Energy: LOW | MED | HIGH
+model Task {
+  id              String    @id @default(uuid())
+  userId          String
+  domainId        String
+  projectId       String?
+  parentTaskId    String?
+  title           String
+  description     String?
+  status          String    @default("NEXT") // TaskStatus
+  deadlineAt      DateTime?
+  scheduledFor    DateTime?
+  snoozedUntil    DateTime?
+  effortMinutes   Int?
+  energyRequired  String    @default("MED") // Energy
+  impact          Int       @default(3) // 1..5
+  urgency         Int       @default(3) // 1..5
+  strategicValue  Int       @default(0) // 0..5
+  riskOfDelay     Int       @default(0) // 0..5
+  isBlocker       Boolean   @default(false)
+  lastTouchedAt   DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  domain       Domain          @relation(fields: [domainId], references: [id])
+  project      Project?        @relation(fields: [projectId], references: [id])
+  parentTask   Task?           @relation("SubTasks", fields: [parentTaskId], references: [id])
+  subTasks     Task[]          @relation("SubTasks")
+  dependencies TaskDependency[] @relation("DependentTask")
+  blockedBy    TaskDependency[] @relation("BlockingTask")
+  taskTags     TaskTag[]
+  scoringRuns  ScoringRun[]
+  focusSessions FocusSession[]
+
+  @@index([userId, status, domainId])
+  @@index([userId, projectId, status])
+  @@index([userId, deadlineAt])
+  @@index([userId, snoozedUntil])
+}
+
+model TaskDependency {
+  id              String @id @default(uuid())
+  userId          String
+  taskId          String
+  dependsOnTaskId String
+
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task         Task @relation("DependentTask", fields: [taskId], references: [id], onDelete: Cascade)
+  dependsOnTask Task @relation("BlockingTask", fields: [dependsOnTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, dependsOnTaskId])
+  @@index([userId, taskId])
+}
+
+// ── Tags ──────────────────────────────────────────────────────────────────────
+
+model Tag {
+  id     String @id @default(uuid())
+  userId String
+  name   String
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskTags TaskTag[]
+
+  @@unique([userId, name])
+}
+
+model TaskTag {
+  id     String @id @default(uuid())
+  userId String
+  taskId String
+  tagId  String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, tagId])
+}
+
+// ── Scoring ───────────────────────────────────────────────────────────────────
+
+model ScoringRun {
+  id              String   @id @default(uuid())
+  userId          String
+  taskId          String
+  scoredAt        DateTime @default(now())
+  priorityScore   Float
+  scoreComponents String   // JSON as text
+  explanation     String
+  context         String   // JSON as text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([userId, scoredAt])
+  @@index([taskId, scoredAt])
+}
+
+// ── Plans ─────────────────────────────────────────────────────────────────────
+
+model DailyPlan {
+  id          String   @id @default(uuid())
+  userId      String
+  planDate    String   // Stored as YYYY-MM-DD string for SQLite compatibility
+  generatedAt DateTime @default(now())
+  inputsJson  String   // JSON as text
+  planJson    String   // JSON as text
+  notes       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, planDate])
+}
+
+// ── Focus Sessions ────────────────────────────────────────────────────────────
+
+// FocusMode: SINGLE_THREAD | POMODORO | OPEN
+model FocusSession {
+  id              String    @id @default(uuid())
+  userId          String
+  taskId          String?
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  durationSeconds Int?
+  mode            String    @default("SINGLE_THREAD") // FocusMode
+  outcome         String?
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+// ── Activity Log ──────────────────────────────────────────────────────────────
+
+model ActivityLog {
+  id         String   @id @default(uuid())
+  userId     String
+  occurredAt DateTime @default(now())
+  entityType String
+  entityId   String
+  action     String
+  detailJson String   // JSON as text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, occurredAt])
+}

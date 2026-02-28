@@ -4,3 +4,8 @@ out
 .env.local
 coverage
 .DS_Store
+prisma/*.db
+prisma/*.db-journal
+test-results/
+playwright-report/
+tsconfig.tsbuildinfo
