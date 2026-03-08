@@ -22,6 +22,8 @@ type InboxItem = {
   rawText: string;
   capturedAt: string;
   status: string;
+  aiSuggestionsJson: string | null;
+  aiSuggestedDomainId: string | null;
 };
 type Domain = { id: string; name: string; color: string | null };
 
@@ -55,7 +57,10 @@ export default function TriagePage({
         const found = items.find((i) => i.id === id);
         if (found) {
           setItem(found);
-          setTitle(found.rawText.slice(0, 100));
+          // Use AI clean title if available, otherwise fall back to raw text
+          const ai = found.aiSuggestionsJson ? JSON.parse(found.aiSuggestionsJson) : null;
+          setTitle(ai?.cleanTitle ?? found.rawText.slice(0, 100));
+          if (found.aiSuggestedDomainId) setDomainId(found.aiSuggestedDomainId);
         }
       });
     fetch("/api/domains")

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Capture</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- ── IDLE / RECORDING ── -->
+    <div id="screen-capture" class="screen active">
+      <div id="header">
+        <span class="app-title">SecondBrain Capture</span>
+        <div class="header-actions">
+          <button id="btn-settings" class="icon-btn" title="Settings">⚙</button>
+          <button id="btn-close" class="icon-btn" title="Close">✕</button>
+        </div>
+      </div>
+
+      <div id="mic-area">
+        <button id="btn-mic" class="mic-btn" title="Click to record">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.31 6-6.72h-1.7z"/>
+          </svg>
+        </button>
+        <div id="recording-indicator" class="hidden">
+          <span class="pulse-dot"></span>
+          <span id="timer">0:00</span>
+        </div>
+        <p id="mic-hint">Click to record · Space to start/stop</p>
+      </div>
+    </div>
+
+    <!-- ── PROCESSING ── -->
+    <div id="screen-processing" class="screen">
+      <div id="header">
+        <span class="app-title">SecondBrain Capture</span>
+        <button id="btn-close2" class="icon-btn" title="Close">✕</button>
+      </div>
+      <div class="processing-body">
+        <div class="spinner"></div>
+        <p id="processing-status">Transcribing audio…</p>
+      </div>
+    </div>
+
+    <!-- ── PREVIEW ── -->
+    <div id="screen-preview" class="screen">
+      <div id="header">
+        <span class="app-title">SecondBrain Capture</span>
+        <button id="btn-close3" class="icon-btn" title="Close">✕</button>
+      </div>
+      <div class="preview-body">
+        <input id="preview-title" class="title-input" placeholder="Task title…" />
+        <div class="preview-row">
+          <select id="preview-domain" class="select-input">
+            <option value="">No domain</option>
+          </select>
+          <select id="preview-priority" class="select-input priority-select">
+            <option value="HIGH">🔴 HIGH</option>
+            <option value="MEDIUM" selected>🟡 MEDIUM</option>
+            <option value="LOW">🟢 LOW</option>
+          </select>
+        </div>
+        <div class="preview-row">
+          <input id="preview-due" class="date-input" type="date" placeholder="Due date (optional)" />
+        </div>
+        <details class="transcript-details">
+          <summary>Transcript</summary>
+          <p id="preview-transcript" class="transcript-text"></p>
+        </details>
+        <div class="preview-actions">
+          <button id="btn-discard" class="btn btn-ghost">Discard</button>
+          <button id="btn-save" class="btn btn-primary">Save to Inbox ↵</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SUCCESS ── -->
+    <div id="screen-success" class="screen">
+      <div class="success-body">
+        <div class="success-icon">✓</div>
+        <p>Saved to inbox!</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

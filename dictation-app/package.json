@@ -1,0 +1,16 @@
+{
+  "name": "whisper-dictation",
+  "version": "1.0.0",
+  "description": "Whisper-powered system-wide dictation — Windows Voice Typing replacement",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0"
+  }
+}

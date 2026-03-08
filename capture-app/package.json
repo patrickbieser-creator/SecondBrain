@@ -1,0 +1,19 @@
+{
+  "name": "secondbrain-capture",
+  "version": "1.0.0",
+  "description": "Voice capture app for SecondBrain inbox",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "electron-store": "^8.2.0",
+    "form-data": "^4.0.1",
+    "node-fetch": "^2.7.0",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0"
+  }
+}

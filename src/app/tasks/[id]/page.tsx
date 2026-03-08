@@ -20,7 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { DomainPill } from "@/components/common/DomainPill";
-import { ArrowLeft, Focus, CheckCircle, BellOff, Save } from "lucide-react";
+import { ArrowLeft, CheckCircle, BellOff, Save } from "lucide-react";
 import { toast } from "sonner";
 
 type Task = {
@@ -206,11 +206,6 @@ export default function TaskDetailPage({
         </Badge>
         <DomainPill name={task.domain.name} color={task.domain.color} />
         <div className="ml-auto flex gap-2">
-          <Link href={`/focus?taskId=${id}`}>
-            <Button size="sm" variant="outline" className="gap-1">
-              <Focus className="h-3.5 w-3.5" /> Focus
-            </Button>
-          </Link>
           <Button
             size="sm"
             className="gap-1 bg-green-600 hover:bg-green-700"

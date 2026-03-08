@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { WhyPopover } from "@/components/common/WhyPopover";
 import { DomainPill } from "@/components/common/DomainPill";
-import { Clock, Zap, Pencil } from "lucide-react";
+import { Clock, Zap } from "lucide-react";
 
 type ScoredTask = {
   id: string;
@@ -54,7 +54,7 @@ export function NowList({ tasks, onComplete }: NowListProps) {
                     #{i + 1}
                   </span>
                   <Link
-                    href={`/focus?taskId=${task.id}`}
+                    href={`/tasks/${task.id}`}
                     className="font-semibold text-sm hover:underline line-clamp-2"
                   >
                     {task.title}
@@ -77,13 +77,6 @@ export function NowList({ tasks, onComplete }: NowListProps) {
               <div className="flex items-center gap-1 flex-shrink-0">
                 <ScoreBadge score={task.priorityScore} />
                 <WhyPopover explanation={task.explanation} />
-                <Link
-                  href={`/tasks/${task.id}`}
-                  className="p-1 text-muted-foreground hover:text-foreground"
-                  title="Edit task"
-                >
-                  <Pencil className="h-3 w-3" />
-                </Link>
                 {onComplete && (
                   <button
                     onClick={() => onComplete(task.id)}

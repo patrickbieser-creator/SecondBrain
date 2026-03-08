@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { RefreshCw, Sparkles } from "lucide-react";
+import { RefreshCw, Sparkles, ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { NewTaskDialog } from "@/components/today/NewTaskDialog";
 
@@ -57,6 +57,10 @@ export default function TodayPage() {
   const [inboxItems, setInboxItems] = useState<
     { id: string; rawText: string; capturedAt: string }[]
   >([]);
+  const [completedTasks, setCompletedTasks] = useState<
+    { id: string; title: string; domainName: string; domainColor: string | null; completedAt: string | null }[]
+  >([]);
+  const [showCompleted, setShowCompleted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
 
@@ -138,11 +142,41 @@ export default function TodayPage() {
     }
   };
 
+  const loadCompleted = useCallback(async () => {
+    const res = await fetch("/api/tasks?status=DONE&limit=50");
+    const data = await res.json();
+    setCompletedTasks(
+      (data ?? []).map((t: { id: string; title: string; domain: { name: string; color: string | null }; completedAt?: string | null }) => ({
+        id: t.id,
+        title: t.title,
+        domainName: t.domain.name,
+        domainColor: t.domain.color,
+        completedAt: t.completedAt ?? null,
+      }))
+    );
+  }, []);
+
   const completeTask = async (id: string) => {
     await fetch(`/api/tasks/${id}/complete`, { method: "POST" });
     toast.success("Task marked done");
     recompute();
+    if (showCompleted) loadCompleted();
   };
+
+  const reopenTask = async (id: string) => {
+    await fetch(`/api/tasks/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "NEXT" }),
+    });
+    toast.success("Task reopened");
+    loadCompleted();
+    recompute();
+  };
+
+  useEffect(() => {
+    if (showCompleted) loadCompleted();
+  }, [showCompleted, loadCompleted]);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -209,6 +243,47 @@ export default function TodayPage() {
               NEXT — Up to 10
             </h2>
             <NextList tasks={nextTasks} onComplete={completeTask} />
+          </section>
+
+          <section>
+            <button
+              className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 hover:text-foreground transition-colors"
+              onClick={() => setShowCompleted((v) => !v)}
+            >
+              {showCompleted ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+              Completed ({completedTasks.length})
+            </button>
+            {showCompleted && (
+              <div className="divide-y border rounded-lg">
+                {completedTasks.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No completed tasks.</p>
+                ) : (
+                  completedTasks.map((task) => (
+                    <div key={task.id} className="flex items-center gap-3 px-4 py-2.5">
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm line-through text-muted-foreground line-clamp-1">
+                          {task.title}
+                        </span>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <span
+                            className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+                            style={{ background: task.domainColor ?? "#888" }}
+                          />
+                          <span className="text-xs text-muted-foreground">{task.domainName}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => reopenTask(task.id)}
+                        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 flex-shrink-0"
+                        title="Reopen task"
+                      >
+                        <RotateCcw className="h-3 w-3" /> Reopen
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </section>
         </div>
 

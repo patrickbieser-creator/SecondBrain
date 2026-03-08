@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
       rawText: body.rawText,
       source: body.source ?? "MANUAL",
       status: "UNPROCESSED",
+      ...(body.aiSuggestedDomainId && { aiSuggestedDomainId: body.aiSuggestedDomainId }),
+      ...(body.aiSuggestionsJson && { aiSuggestionsJson: body.aiSuggestionsJson }),
     },
   });
 

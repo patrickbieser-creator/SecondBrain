@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Capture App Settings</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #1a1a2e; color: #eaeaea;
+      padding: 24px; font-size: 14px;
+    }
+    h2 { margin-bottom: 20px; font-size: 18px; }
+    label { display: block; margin-bottom: 4px; color: #aaa; font-size: 12px; }
+    input {
+      width: 100%; padding: 8px 12px; margin-bottom: 16px;
+      background: #16213e; border: 1px solid #0f3460; color: #eaeaea;
+      border-radius: 8px; font-size: 14px;
+    }
+    input:focus { outline: none; border-color: #e94560; }
+    .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    button {
+      padding: 8px 20px; border-radius: 8px; border: none;
+      font-size: 14px; cursor: pointer; font-weight: 500;
+    }
+    .btn-primary { background: #e94560; color: #fff; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost { background: #0f3460; color: #eaeaea; }
+    #msg { text-align: center; color: #4CAF50; min-height: 20px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>Settings</h2>
+  <label>OpenAI API Key (for Whisper transcription)</label>
+  <input type="password" id="openai-key" placeholder="sk-…" />
+
+  <label>Anthropic API Key (for Claude tagging)</label>
+  <input type="password" id="anthropic-key" placeholder="sk-ant-…" />
+
+  <label>SecondBrain URL</label>
+  <input type="text" id="sb-url" placeholder="http://localhost:3000" />
+
+  <div class="actions">
+    <button class="btn-ghost" onclick="window.close()">Cancel</button>
+    <button class="btn-primary" id="btn-save">Save</button>
+  </div>
+  <p id="msg"></p>
+
+  <script>
+    async function load() {
+      const cfg = await window.capture.getConfig();
+      document.getElementById("openai-key").value = cfg.openaiApiKey || "";
+      document.getElementById("anthropic-key").value = cfg.anthropicApiKey || "";
+      document.getElementById("sb-url").value = cfg.secondbrainUrl || "http://localhost:3000";
+    }
+    load();
+
+    document.getElementById("btn-save").addEventListener("click", async () => {
+      await window.capture.setConfig({
+        openaiApiKey: document.getElementById("openai-key").value.trim(),
+        anthropicApiKey: document.getElementById("anthropic-key").value.trim(),
+        secondbrainUrl: document.getElementById("sb-url").value.trim() || "http://localhost:3000",
+      });
+      document.getElementById("msg").textContent = "Saved!";
+      setTimeout(() => { document.getElementById("msg").textContent = ""; }, 2000);
+    });
+  </script>
+</body>
+</html>

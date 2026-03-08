@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(cd /d/Projects/SecondBrain && npx shadcn@latest init --defaults --yes 2>&1)",
+      "Bash(cat:*)",
+      "Bash(cd /d/Projects/SecondBrain && npx prisma migrate dev --name init 2>&1)",
+      "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name init 2>&1)",
+      "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" TEST_USER_ID=\"test-user-id-0000\" npx tsx prisma/seed.ts 2>&1)",
+      "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" npx tsc --noEmit 2>&1)",
+      "Bash(curl:*)",
+      "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" TEST_AUTH=true TEST_USER_ID=\"test-user-id-0000\" npx playwright test --reporter=list 2>&1)",
+      "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" TEST_AUTH=true TEST_USER_ID=\"test-user-id-0000\" npx playwright test tests/today.spec.ts --reporter=list 2>&1)",
+      "Bash(node:*)",
+      "Bash(mkdir assets:*)"
+    ]
+  }
+}
