@@ -220,7 +220,8 @@ ipcMain.on("transcript-ready", (_e, { text, error }) => {
   );
   console.log(`[Dictation] Pasting: "${finalText}"`);
 
-  // Always write to clipboard so Ctrl+V works as a fallback if focus was lost
+  // Write to clipboard unconditionally
+  const prevClipboard = clipboard.readText();
   clipboard.writeText(finalText);
 
   if (store.get("autoPaste")) {
@@ -231,7 +232,8 @@ ipcMain.on("transcript-ready", (_e, { text, error }) => {
       const cmd = `powershell -NoProfile -NonInteractive -Command "$wsh = New-Object -ComObject WScript.Shell; $wsh.SendKeys('^v')"`;
       exec(cmd, (err) => {
         if (err) console.error("[Dictation] Paste error:", err.message);
-        // Transcript intentionally left in clipboard — Ctrl+V still works if auto-paste missed focus
+        // Restore previous clipboard after a brief delay
+        setTimeout(() => clipboard.writeText(prevClipboard), 800);
       });
     }, 80);
   }

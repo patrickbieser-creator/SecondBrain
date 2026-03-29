@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dictation App — Changelog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Brand tokens (NWS Digital) ─────────────────────────────────────────── */
+    :root {
+      --nws-green:        #88ac3e;   /* Northwoods Green — logo / primary accent  */
+      --nws-teal-dark:    #064347;   /* Deep Teal — headings / key UI             */
+      --nws-teal:         #418c7d;   /* Teal — secondary accent                   */
+      --nws-gold:         #ddb027;   /* Gold — highlight / "latest" marker        */
+      --nws-rust:         #a95b28;   /* Rust Orange — warm accent                 */
+      --nws-slate:        #4c7887;   /* Slate Blue — muted accent                 */
+      --nws-gray-dark:    #4b4b4b;   /* Dark Gray — body text                     */
+      --nws-gray-med:     #7e7e7e;   /* Medium Gray — secondary text              */
+      --nws-gray-light:   #e6e6e6;   /* Light Gray — rule lines / backgrounds     */
+      --nws-pale-green:   #e1e6d2;   /* Pale Green — page background              */
+      --nws-pale-sage:    #d7e1d7;   /* Pale Sage — card / stripe background      */
+      --nws-cream:        #f0eecd;   /* Cream — warm block background             */
+      --nws-forest:       #5a6e3c;   /* Dark Forest Green — text on light bg      */
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 14px;
+      background: var(--nws-pale-green);
+      color: var(--nws-gray-dark);
+      line-height: 1.7;
+    }
+
+    /* ── Header banner (.BlueBlock equivalent) ──────────────────────────────── */
+    .page-header {
+      background: var(--nws-teal-dark);
+      padding: 48px 80px;
+      color: #fff;
+    }
+
+    .page-header h1 {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 36px;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--nws-gray-light);
+      opacity: 0.85;
+    }
+
+    /* ── Page body ───────────────────────────────────────────────────────────── */
+    .page-body {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 80px 80px;
+    }
+
+    /* ── Section heading (H3 spec: Montserrat 24px weight 400, Deep Teal) ───── */
+    .section-heading {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--nws-teal-dark);
+      margin-bottom: 32px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--nws-green);
+    }
+
+    /* ── Timeline ────────────────────────────────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 10px;
+      bottom: 0;
+      width: 2px;
+      background: var(--nws-gray-light);
+    }
+
+    /* ── Entry ───────────────────────────────────────────────────────────────── */
+    .entry {
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .entry::before {
+      content: "";
+      position: absolute;
+      left: -27px;
+      top: 9px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--nws-gray-med);
+      border: 2px solid var(--nws-pale-green);
+    }
+
+    .entry.latest::before {
+      background: var(--nws-gold);
+      box-shadow: 0 0 0 3px rgba(221, 176, 39, 0.25);
+    }
+
+    /* ── Entry card (.GreyStripe equivalent) ─────────────────────────────────── */
+    .entry-card {
+      background: #fff;
+      border: 1px solid var(--nws-gray-light);
+      border-top: 3px solid var(--nws-gray-light);
+      padding: 20px 24px;
+    }
+
+    .entry.latest .entry-card {
+      border-top-color: var(--nws-gold);
+    }
+
+    /* ── Entry header ────────────────────────────────────────────────────────── */
+    .entry-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* H5 spec: Montserrat 18px weight 500 */
+    .version {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--nws-teal-dark);
+    }
+
+    .date {
+      font-size: 13px;
+      color: var(--nws-gray-med);
+      font-variant-numeric: tabular-nums;
+      margin-left: auto;
+    }
+
+    /* ── Badges ──────────────────────────────────────────────────────────────── */
+    .badge {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .badge-new     { background: var(--nws-teal-dark); color: #fff; }
+    .badge-feature { background: var(--nws-green);     color: #fff; }
+    .badge-polish  { background: var(--nws-gold);      color: #fff; }
+
+    /* ── Change groups ───────────────────────────────────────────────────────── */
+    .group {
+      margin-bottom: 16px;
+    }
+
+    .group:last-child {
+      margin-bottom: 0;
+    }
+
+    .group-label {
+      font-family: "Montserrat", Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--nws-forest);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--nws-pale-sage);
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    li {
+      font-size: 13px;
+      color: var(--nws-gray-dark);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: var(--nws-green);
+      font-weight: 700;
+    }
+
+    li strong {
+      font-weight: 700;
+      color: var(--nws-teal-dark);
+    }
+
+    /* Inline code */
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 12px;
+      background: var(--nws-pale-green);
+      color: var(--nws-forest);
+      padding: 1px 5px;
+      border: 1px solid var(--nws-gray-light);
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+    .page-footer {
+      background: var(--nws-gray-light);
+      padding: 20px 80px;
+      font-size: 13px;
+      color: var(--nws-gray-med);
+      border-top: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header banner -->
+  <div class="page-header">
+    <h1>Dictation App</h1>
+    <p>Whisper-powered system-wide dictation for Windows &mdash; release changelog</p>
+  </div>
+
+  <!-- Main content -->
+  <div class="page-body">
+
+    <h2 class="section-heading">Release History</h2>
+
+    <div class="timeline">
+
+      <!-- ── March 28, 2026 — Audio Feedback ── -->
+      <div class="entry latest">
+        <div class="entry-card">
+          <div class="entry-header">
+            <span class="version">Audio Feedback</span>
+            <span class="badge badge-feature">Feature</span>
+            <span class="date">March 28, 2026</span>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Added</div>
+            <ul>
+              <li><strong>Start tone</strong> &mdash; two ascending sine tones (600&thinsp;Hz &rarr; 900&thinsp;Hz) play immediately after the microphone opens, confirming the app is listening</li>
+              <li><strong>Stop tone</strong> &mdash; two descending sine tones (700&thinsp;Hz &rarr; 440&thinsp;Hz) play when recording stops, confirming audio capture has ended</li>
+              <li>Tones are silent on discard &mdash; pressing Discard produces no audio feedback so accidental triggers stay unobtrusive</li>
+              <li>Each tone uses a self-contained <code>AudioContext</code> that opens and closes automatically; no persistent audio resources are held between recordings</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── March 7, 2026 — Tray Icons ── -->
+      <div class="entry">
+        <div class="entry-card">
+          <div class="entry-header">
+            <span class="version">Tray Icons</span>
+            <span class="badge badge-polish">Polish</span>
+            <span class="date">March 7, 2026</span>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Changed</div>
+            <ul>
+              <li><strong>mic-on.png / mic-off.png</strong> replaced with properly sized assets generated by <code>generate-icons.js</code></li>
+              <li>Icons now render crisply at Windows tray scale (16&thinsp;px and 32&thinsp;px DPI variants)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── March 7, 2026 — v1.0.0 ── -->
+      <div class="entry">
+        <div class="entry-card">
+          <div class="entry-header">
+            <span class="version">v1.0.0 &mdash; Initial Release</span>
+            <span class="badge badge-new">New</span>
+            <span class="date">March 7, 2026</span>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Core Dictation</div>
+            <ul>
+              <li><strong>Global hotkey</strong> (<code>Ctrl+Alt+D</code>) toggles recording system-wide without stealing window focus</li>
+              <li><strong>Whisper transcription</strong> &mdash; audio is captured via <code>MediaRecorder</code> and sent to OpenAI Whisper (<code>whisper-1</code>) for transcription; supports language selection</li>
+              <li><strong>Auto-paste</strong> &mdash; transcribed text is written to the clipboard and sent as <code>Ctrl+V</code> to the foreground window via PowerShell WScript; target window never loses focus</li>
+              <li><strong>Silence detection</strong> &mdash; recording auto-stops after configurable silence (default 2&thinsp;500&thinsp;ms) using an RMS analyser on the live audio stream</li>
+              <li><strong>Spoken newline commands</strong> &mdash; phrases &ldquo;new line&rdquo;, &ldquo;newline&rdquo;, &ldquo;next line&rdquo;, and &ldquo;new paragraph&rdquo; are converted to actual newline characters before pasting</li>
+            </ul>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Claude Cleanup (Optional)</div>
+            <ul>
+              <li>Raw Whisper transcript can be passed through a Claude model to remove filler words, fix punctuation, and join run-on sentences</li>
+              <li>Configurable model (defaults to <code>claude-haiku-4-5</code>); falls back to raw transcript on API error</li>
+              <li>Indicator shows a distinct &ldquo;Cleaning up&hellip;&rdquo; state while Claude processes</li>
+            </ul>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Floating Indicator</div>
+            <ul>
+              <li>Non-focusable pill appears at the bottom-center of the screen during recording &mdash; never steals focus from the target window</li>
+              <li>Six visual states: <strong>Recording</strong>, <strong>Paused</strong>, <strong>Processing</strong> (spinner), <strong>Cleaning</strong>, <strong>Success</strong> (shows transcript preview), <strong>Error</strong></li>
+              <li>Active microphone label displayed in the pill</li>
+              <li>In-pill controls: <strong>Pause / Resume</strong>, <strong>Stop</strong> (commit recording), <strong>Discard</strong> (discard audio without transcribing)</li>
+              <li>Card is draggable to reposition on screen</li>
+            </ul>
+          </div>
+
+          <div class="group">
+            <div class="group-label">System Tray</div>
+            <ul>
+              <li>Tray icon switches between mic-off and mic-on states; tooltip reflects current status (Ready / Recording / Transcribing)</li>
+              <li>Left-click tray icon to toggle recording; right-click for context menu</li>
+              <li>Context menu: Start/Stop Dictation (with active hotkey shown), Settings, Quit</li>
+            </ul>
+          </div>
+
+          <div class="group">
+            <div class="group-label">Settings</div>
+            <ul>
+              <li>OpenAI API key and Anthropic API key configuration</li>
+              <li>Claude cleanup toggle and model selector</li>
+              <li>Hotkey rebinding with live re-registration (fallbacks: <code>Ctrl+Alt+D</code> &rarr; <code>Ctrl+Shift+D</code>)</li>
+              <li>Language selection for Whisper</li>
+              <li>Auto-paste toggle</li>
+              <li>Silence timeout (ms) &mdash; set to 0 to disable auto-stop</li>
+              <li>Settings open automatically on first launch if no API key is configured</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+      <!-- end v1.0.0 -->
+
+    </div><!-- end timeline -->
+  </div><!-- end page-body -->
+
+  <div class="page-footer">
+    Dictation App &mdash; NWS Digital &nbsp;&middot;&nbsp; Internal tool documentation
+  </div>
+
+</body>
+</html>

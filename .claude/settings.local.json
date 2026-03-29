@@ -13,7 +13,23 @@
       "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" TEST_AUTH=true TEST_USER_ID=\"test-user-id-0000\" npx playwright test --reporter=list 2>&1)",
       "Bash(cd /d/Projects/SecondBrain && DATABASE_URL=\"file:./dev.db\" TEST_AUTH=true TEST_USER_ID=\"test-user-id-0000\" npx playwright test tests/today.spec.ts --reporter=list 2>&1)",
       "Bash(node:*)",
-      "Bash(mkdir assets:*)"
+      "Bash(mkdir assets:*)",
+      "Bash(powershell -NoProfile -Command \"Get-Process | Where-Object {$_.Name -like '*electron*' -or $_.Name -like '*dictation*'} | Select-Object Name, Id, Path\")",
+      "Bash(tasklist)",
+      "Bash(icacls \"D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\")",
+      "Bash(icacls:*)",
+      "Bash(cmd /c 'icacls \"D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\" /grant \"Pat:\\(M\\)\"')",
+      "Bash(cmd /c 'icacls \"D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\"')",
+      "Bash(cmd /c \"icacls D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(attrib:*)",
+      "Bash(handle64.exe \"D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\")",
+      "Bash(handle.exe \"D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js\")",
+      "Bash(powershell.exe -NoProfile -Command \"\n\\\\$path = 'D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js'\n\\\\$c = [System.IO.File]::ReadAllText\\(\\\\$path\\)\n\\\\$old1 = \\\\\"  // Write to clipboard unconditionally\\\\`r\\\\`n  const prevClipboard = clipboard.readText\\(\\);\\\\`r\\\\`n  clipboard.writeText\\(finalText\\);\\\\\"\n\\\\$new1 = \\\\\"  // Always write to clipboard so Ctrl+V works as a fallback if focus was lost\\\\`r\\\\`n  clipboard.writeText\\(finalText\\);\\\\\"\n\\\\$old2 = \\\\\"        // Restore previous clipboard after a brief delay\\\\`r\\\\`n        setTimeout\\(\\(\\) => clipboard.writeText\\(prevClipboard\\), 800\\);\\\\\"\n\\\\$new2 = \\\\\"        // Transcript intentionally left in clipboard — Ctrl+V still works if auto-paste missed focus\\\\\"\n\\\\$c2 = \\\\$c.Replace\\(\\\\$old1, \\\\$new1\\).Replace\\(\\\\$old2, \\\\$new2\\)\nif \\(\\\\$c2 -eq \\\\$c\\) {\n  Write-Host 'CRLF replace failed, trying LF'\n  \\\\$old1 = \\\\\"  // Write to clipboard unconditionally\\\\`n  const prevClipboard = clipboard.readText\\(\\);\\\\`n  clipboard.writeText\\(finalText\\);\\\\\"\n  \\\\$old2 = \\\\\"        // Restore previous clipboard after a brief delay\\\\`n        setTimeout\\(\\(\\) => clipboard.writeText\\(prevClipboard\\), 800\\);\\\\\"\n  \\\\$c2 = \\\\$c.Replace\\(\\\\$old1, \\\\$new1\\).Replace\\(\\\\$old2, \\\\$new2\\)\n}\nif \\(\\\\$c2.Contains\\('prevClipboard'\\)\\) { Write-Host 'FAILED: still contains prevClipboard'; exit 1 }\n[System.IO.File]::WriteAllText\\(\\\\$path, \\\\$c2\\)\nWrite-Host 'SUCCESS'\n\" 2>&1)",
+      "Bash(TaskOutput by6q804an:*)",
+      "Bash(cmd /c \"icacls D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js /grant Pat:\\(M\\)\")",
+      "Bash(powershell.exe -NoProfile -Command \"icacls ''D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js'' /grant ''Pat:\\(M\\)''\")",
+      "Bash(powershell.exe -NoProfile -Command \"icacls ''D:\\\\Projects\\\\SecondBrain\\\\dictation-app\\\\main.js''\")"
     ]
   }
 }

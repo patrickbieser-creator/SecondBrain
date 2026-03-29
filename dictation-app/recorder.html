@@ -19,6 +19,34 @@ let openaiApiKey = "";
 let audioContext = null;
 let discarding = false;   // when true, onstop skips transcription
 let stopping = false;     // guard against double-stop
+
+// ── Audio tones ────────────────────────────────────────────────────────────────
+function playTone(frequency, duration = 100, volume = 0.4) {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = frequency;
+    osc.type = "sine";
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration / 1000);
+    osc.onended = () => ctx.close();
+  } catch (_) {}
+}
+
+function playStartTone() {
+  playTone(600, 80);
+  setTimeout(() => playTone(900, 120), 90);
+}
+
+function playStopTone() {
+  playTone(700, 80);
+  setTimeout(() => playTone(440, 120), 90);
+}
 let anthropicApiKey = "";
 let claudeCleanup = false;
 let claudeModel = "claude-haiku-4-5-20251001";
@@ -77,6 +105,7 @@ async function startRecording() {
     return;
   }
 
+  playStartTone();
   audioChunks = [];
 
   // Report which mic is active
@@ -113,6 +142,7 @@ function stopRecording() {
   if (stopping) return;
   if (!mediaRecorder || mediaRecorder.state === "inactive") return;
   stopping = true;
+  if (!discarding) playStopTone();
   clearSilenceTimer();
   mediaRecorder.stop();
 }
