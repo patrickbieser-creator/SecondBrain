@@ -77,3 +77,20 @@ Response helpers (`ok`, `unauthorized`, `notFound`, `badRequest`) are in `src/li
 
 ### Testing
 Playwright tests run sequentially (single worker), Chrome only, against `localhost:3000`. Tests use `TEST_AUTH=true` — no login flow required. When adding tests, follow the pattern in `tests/today.spec.ts`: navigate to page, interact via accessible roles/labels, assert visible outcomes.
+
+## Project Memory
+
+The `memory/` folder holds four living documents. Read them at the start of any session; update them as work progresses.
+
+| File | Purpose | When to update |
+|------|---------|---------------|
+| `memory/session-log.md` | Running log of sessions — what was worked on, decided, changed | Append a dated entry at the end of every session |
+| `memory/decisions.md` | Architecture decisions, trade-offs, paths rejected and why | When a non-obvious choice is made or reversed |
+| `memory/current-state.md` | What's implemented, pending, and blocked | Whenever implementation state changes significantly |
+| `memory/scratchpad.md` | Active working notes, explorations, hypotheses | Use freely during a session; clear when work wraps up |
+
+**Rules:**
+- Always read `current-state.md` and `session-log.md` before starting work so you have context without asking.
+- Append to `session-log.md` — never overwrite prior entries.
+- `scratchpad.md` is ephemeral; archive or clear it at session end.
+- Keep entries concise — these files are scanned, not read cover-to-cover.

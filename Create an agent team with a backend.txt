@@ -1,0 +1,10 @@
+"Create an agent team with a backend developer, frontend developer, and test engineer to build X. Have them coordinate on a shared task list."
+
+ Recommended setup for your SecondBrain v2
+
+  1. Enable agent teams (env var above)
+  2. Create .claude/agents/ subagents for backend, frontend, testing
+  3. Add a .worktreeinclude file copying .env.local and dev.db to worktrees
+  4. Start a team session and describe what you want to build
+
+  Would you like me to set up the agent team config and subagent files for your project now?
